@@ -1,0 +1,38 @@
+This is a modification of the summingbird-example provided by Twitter,
+using a Kafka source for events and implementing the hybrid batch-realtime
+approach.
+
+PREREQUISITES
+-------------
+
+You need to have memcached, zookeeper, and kafka installed and running
+on your machine on the usual ports.
+
+
+RUNNING
+---------------------------------
+
+To demo the hybrid mode:
+
+  sbt 'run-main summingbird.proto.RunHybrid'
+
+You'll see a bunch of start-up messages, and then it should settle into regularly
+spitting out some "sanity check" messages once a minute, both a detailed view of
+what's been computed on a single key, and aggregate data about how many messages
+have been produced and seen at various stages.  (Some small lag is expected, but
+should remain fairly steady over time.)
+
+Once every 5 minutes, the demo rolls over a new log file and kicks off a batch
+computation to update the "offline" store.
+
+
+Example output after running for a while:
+
+14/03/27 13:31:30 INFO example.HybridRunner$: Offline: Some((BatchID.4653174,296))
+14/03/27 13:31:30 INFO example.HybridRunner$: Online: (BatchID.4653174,Some(10))
+14/03/27 13:31:30 INFO example.HybridRunner$: Hybrid: Some(306)
+14/03/27 13:31:30 INFO example.RunHybrid$: Events Produced: 2875
+14/03/27 13:31:30 INFO example.RunHybrid$: Events Ingested: 2875
+14/03/27 13:31:30 INFO example.RunHybrid$: Events Counted (offline): 2784
+14/03/27 13:31:30 INFO example.RunHybrid$: Events Counted (online): 81
+14/03/27 13:31:30 INFO example.RunHybrid$: Events Counted (hybrid): 2865
